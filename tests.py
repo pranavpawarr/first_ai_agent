@@ -1,23 +1,37 @@
-from functions.write_file import write_file
+from functions.run_python_file import run_python_file
+
 
 def test():
-    # Test 1: Valid file in calculator directory
-    result = write_file("calculator", "lorem.txt", "wait, this isn't lorem ipsum")
-    print('write_file("calculator", "lorem.txt", "wait, this isn\'t lorem ipsum"):')
+    # Test 1: Valid file showing usage instructions
+    result = run_python_file("calculator", "main.py")
+    print('run_python_file("calculator", "main.py"):')
     print(result)
     print("")
 
-    # Test 2: Valid file in subdirectory
-    result = write_file("calculator", "pkg/morelorem.txt", "lorem ipsum dolor sit amet")
-    print('write_file("calculator", "pkg/morelorem.txt", "lorem ipsum dolor sit amet"):')
+    # Test 2: Calculator with arguments (expecting nasty rendered result)
+    result = run_python_file("calculator", "main.py", ["3 + 5"])
+    print('run_python_file("calculator", "main.py", ["3 + 5"]):')
     print(result)
     print("")
 
-    # Test 3: Absolute path outside working directory (should fail)
-    result = write_file("calculator", "/tmp/temp.txt", "this should not be allowed")
-    print('write_file("calculator", "/tmp/temp.txt", "this should not be allowed"):')
+    # Test 3: Running tests in calculator directory
+    result = run_python_file("calculator", "tests.py")
+    print('run_python_file("calculator", "tests.py"):')
     print(result)
     print("")
+
+    # Test 4: Invalid path outside working directory (should fail)
+    result = run_python_file("calculator", "../main.py")
+    print('run_python_file("calculator", "../main.py"):')
+    print(result)
+    print("")
+
+    # Test 5: Non-existent file (should return error)
+    result = run_python_file("calculator", "nonexistent.py")
+    print('run_python_file("calculator", "nonexistent.py"):')
+    print(result)
+    print("")
+
 
 if __name__ == "__main__":
     test()
