@@ -5,7 +5,8 @@ from google.genai import types
 from dotenv import load_dotenv
 
 from config import SYSTEM_PROMPT
-from call_function import available_functions
+from call_function import available_functions , call_function
+
 
 
 def main():
@@ -54,8 +55,14 @@ def generate_content(client, messages, verbose):
         return response.text
 
     for function_call_part in response.function_calls:
-        print(f"Calling function: {function_call_part.name}({function_call_part.args})")
+        function_response_content = call_function(function_call_part, verbose=verbose)
 
+    try:
+        response_data = function_response_content.parts[0].function_response.response
+    except (AttributeError, IndexError):
+        raise RuntimeError("Function call did not return a valid response.")
 
+    if verbose:
+        print(f"-> {response_data}")
 if __name__ == "__main__":
     main()

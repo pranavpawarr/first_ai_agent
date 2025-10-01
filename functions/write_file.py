@@ -1,10 +1,11 @@
 import os
 from google.genai import types
 
-def write_file(working_directory, file_path, content):
+def write_file(working_directory, file_path, content, mode="w"):
+    if mode not in ["w", "a"]:
+        return f'Error: Invalid mode "{mode}". Must be "w" or "a".'
 
     abs_working_dir = os.path.abspath(working_directory)
-
     abs_file_path = os.path.abspath(os.path.join(working_directory, file_path))
     
     if not abs_file_path.startswith(abs_working_dir):
@@ -20,7 +21,7 @@ def write_file(working_directory, file_path, content):
         return f'Error: "{file_path}" is a directory, not a file'
     
     try:
-        with open(abs_file_path, "w") as f:
+        with open(abs_file_path, mode, encoding="utf-8") as f:
             f.write(content)
         return (
             f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
@@ -34,7 +35,7 @@ schema_write_file = types.FunctionDeclaration(
     parameters=types.Schema(
         type=types.Type.OBJECT,
         properties={
-            "filepath": types.Schema(
+            "file_path": types.Schema(
                 type=types.Type.STRING,
                 description="The path where the file should be written, relative to the working directory. Will create directories if they don't exist.",
             ),
@@ -47,6 +48,6 @@ schema_write_file = types.FunctionDeclaration(
                 description="The file writing mode. Options: 'w' (overwrite), 'a' (append). Default is 'w'.",
             ),
         },
-        required=["filepath", "content"],
+        required=["file_path", "content"],
     ),
 )
